@@ -96,7 +96,6 @@ int main(int argc, char** argv) {
   ::gflags::ParseCommandLineFlags(&argc, &argv, true);
   ::google::InitGoogleLogging(argv[0]);
   setAtenSeed(tc::initRandomSeed(), at::Backend::CUDA);
-  tc::FLAGS_tuner_gen_number_elites = FLAGS_number_elites;
   tc::FLAGS_tuner_gen_generations = FLAGS_generations;
   tc::FLAGS_tuner_gen_pop_size = FLAGS_pop_size;
   tc::FLAGS_tuner_threads = FLAGS_threads;
