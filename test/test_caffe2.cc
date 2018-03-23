@@ -498,7 +498,7 @@ TEST_F(Caffe2Test, TcGroupConvolutionOp) {
   unique_ptr<OperatorBase> net(CreateOperator(ndef, &w1));
   ASSERT_TRUE(net.get());
   {
-    CudaProfiler p;
+    CudaTestProfiler p;
     ASSERT_TRUE(net->Run());
   }
 
@@ -519,7 +519,7 @@ TEST_F(Caffe2Test, TcGroupConvolutionOp) {
   unique_ptr<OperatorBase> op(CreateOperator(def, &w2));
   ASSERT_TRUE(op.get());
   {
-    CudaProfiler p;
+    CudaTestProfiler p;
     ASSERT_TRUE(op->Run());
   }
 
