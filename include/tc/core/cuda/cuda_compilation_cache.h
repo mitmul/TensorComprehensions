@@ -254,6 +254,22 @@ class OptionsCache : public Cache<OptionsCache> {
         const std::string& deviceStr,
         const CudaMappingOptions& options,
         Duration runtime);
+    CachedEntry(
+        const std::string& id,
+        const std::vector<const DLTensor*>& inputs,
+        const std::vector<const DLTensor*>& outputs,
+        const std::string& deviceStr,
+        const CudaMappingOptions& options,
+        const CudaProfilingInfo& pInfo);
+    CachedEntry(
+        const std::string& id,
+        const std::vector<const DLTensor*>& inputs,
+        const std::vector<const DLTensor*>& outputs,
+        const std::string& deviceStr,
+        const CudaMappingOptions& options,
+        Duration runtime,
+        const CudaProfilingInfo& pInfo);
+
     CachedEntry(const OptionsCacheEntryProto& buf);
     OptionsCacheEntryProto toProtobuf() const;
 
@@ -279,11 +295,18 @@ class OptionsCache : public Cache<OptionsCache> {
 
     struct Values {
       Values(const CudaMappingOptions& options, Duration runtime);
+      Values(const CudaMappingOptions& options, const CudaProfilingInfo& pInfo);
       Values(
           const CudaMappingOptions& options,
-          std::vector<Duration>&& runtimes);
+          Duration runtime,
+          const CudaProfilingInfo& pInfo);
+      Values(
+          const CudaMappingOptions& options,
+          std::vector<Duration>&& runtimes,
+          std::vector<CudaProfilingInfo>&& pInfos);
       CudaMappingOptions mappingOptions;
       std::vector<Duration> recordedRuntimes;
+      std::vector<CudaProfilingInfo> profiles;
     };
     Key key;
     std::vector<Values> values;
@@ -328,6 +351,12 @@ class OptionsCache : public Cache<OptionsCache> {
   struct RetrievalResult {
     CudaMappingOptions options;
     std::vector<Duration> recordedRuntimes;
+    std::vector<CudaProfilingInfo> profilingInfo;
+  };
+
+  struct RetrievalResultProfile {
+    CudaMappingOptions options;
+    std::vector<CudaProfilingInfo> profilingInfo;
   };
 
   // returns the sum of cache entry sizes (that is a single cache entry can have
@@ -340,6 +369,18 @@ class OptionsCache : public Cache<OptionsCache> {
       const std::vector<const DLTensor*>& inputs,
       const std::vector<const DLTensor*>& outputs,
       Duration runtime);
+
+  void recordProfilingInfo(
+      const std::string& id,
+      const CudaMappingOptions& options,
+      const std::vector<const DLTensor*>& inputs,
+      const std::vector<const DLTensor*>& outputs,
+      CudaProfilingInfo pIfno);
+
+  std::vector<RetrievalResultProfile> retrieveOptionsAndProfilingInfo(
+      const std::string& id,
+      const std::vector<const DLTensor*>& inputs,
+      const std::vector<const DLTensor*>& outputs) const;
 
   std::vector<RetrievalResult> retrieveOptionsAndRuntimes(
       const std::string& id,
