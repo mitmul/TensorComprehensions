@@ -57,7 +57,11 @@ void GeneticAutotuner::storeCaches(const std::string& filename) {
   } else {
     std::cout << "Dumping cache to " << filename << ".cuda/options"
               << std::endl;
-    tc::OptionsCache::getCache()->keepOnlyBestCandidates(10);
+
+    if (not FLAGS_tuner_gen_profiled_run) {
+      tc::OptionsCache::getCache()->keepOnlyBestCandidates(10);
+    }
+
     tc::OptionsCache::dumpCacheToProtobuf(tc::makeOptionsFilename(filename));
 
     tc::OptionsCache::getCache()->keepOnlyBestCandidates(1);
